@@ -1,5 +1,11 @@
 package com.example.rpialmanac;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +17,11 @@ public class MainActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		GoogleMap mMap;
+		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+		final LatLng FIELD = new LatLng(42.730357, -73.679951);
+		Marker field = mMap.addMarker(new MarkerOptions().position(FIELD));
 	}
 
 	@Override
