@@ -7,8 +7,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.example.
-
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -27,8 +25,8 @@ public class MainActivity extends ActionBarActivity {
 		
 		GoogleMap mMap;
 		mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-		final LatLng FIELD = new LatLng(42.730357, -73.679951);
-		Marker field = mMap.addMarker(new MarkerOptions().position(FIELD));
+		//final LatLng FIELD = new LatLng(42.730357, -73.679951);
+		//Marker field = mMap.addMarker(new MarkerOptions().position(FIELD));
 	}
 
 	@Override
@@ -52,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
 	
 	/**
 	   * AsyncTask for adding a new marker to the database  */
-	private class addMarkerTask extends AsyncTask<Void, Void, Void> {
+	private class AddmarkerTask extends AsyncTask<Void, Void, Void> {
 		/**
 	     * Calls appropriate CloudEndpoint to add a new marker to the database.
 	     *
@@ -60,7 +58,7 @@ public class MainActivity extends ActionBarActivity {
 	     */
 	    @Override
 	    protected Void doInBackground(Void... params) {
-	      addMarker newMarker = new addMarker();
+	      Addmarker newMarker = new Addmarker();
 	      
 	      // Set the ID of the store where the user is. 
 	      // This would be replaced by the actual ID in the final version of the code. 
@@ -69,17 +67,17 @@ public class MainActivity extends ActionBarActivity {
 	      newMarker.setMarkerLat(42.730357);
 	      newMarker.setMarkerLong(-73.679951);
 
-	      addMarkerEndpoint.Builder builder = new addMarkerEndpoint.Builder(
+	      Addmarkerendpoint.Builder builder = new Addmarkerendpoint.Builder(
 	          AndroidHttp.newCompatibleTransport(), new JacksonFactory(),
 	          null);
 	          
 	      builder = CloudEndpointUtils.updateBuilder(builder);
 
-	      Checkinendpoint endpoint = builder.build();
+	      Addmarkerendpoint endpoint = builder.build();
 	      
 
 	      try {
-	        endpoint.insertCheckIn(checkin).execute();
+	        endpoint.insertAddmarker(newMarker).execute();
 	      } catch (IOException e) {
 	        // TODO Auto-generated catch block
 	        e.printStackTrace();

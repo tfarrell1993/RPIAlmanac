@@ -1,13 +1,13 @@
 package com.example.rpialmanac;
 
-import com.example.rpialmanac.PMF;
+import com.example.rpialmanac.EMF;
 
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.CollectionResponse;
 import com.google.appengine.api.datastore.Cursor;
-import com.google.appengine.datanucleus.query.JDOCursorHelper;
+import com.google.appengine.datanucleus.query.JPACursorHelper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,8 +19,8 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-@Api(name = "addmarkerendpoint", namespace = @ApiNamespace(ownerDomain = "example.com", ownerName = "example.com", packagePath = "rpialmanac"))
-public class AddmarkerEndpoint {
+@Api(name = "Addmarkerendpoint", namespace = @ApiNamespace(ownerDomain = "example.com", ownerName = "example.com", packagePath = "rpialmanac"))
+public class Addmarkerendpoint {
 
 	/**
 	 * This method lists all the entities inserted in datastore.
@@ -30,44 +30,45 @@ public class AddmarkerEndpoint {
 	 * persisted and a cursor to the next page.
 	 */
 	@SuppressWarnings({ "unchecked", "unused" })
-	@ApiMethod(name = "listaddMarker")
-	public CollectionResponse<addMarker> listaddMarker(
+	@ApiMethod(name = "listAddmarker")
+	public CollectionResponse<Addmarker> listAddmarker(
 			@Nullable @Named("cursor") String cursorString,
 			@Nullable @Named("limit") Integer limit) {
 
 		EntityManager mgr = null;
 		Cursor cursor = null;
-		List<addMarker> execute = null;
+		List<Addmarker> execute = null;
 
 		try {
 			mgr = getEntityManager();
-			Query query = mgr.createQuery(addMarker.class);
+			Query query = mgr.createQuery("select from Addmarker as marker");
 			if (cursorString != null && cursorString != "") {
 				cursor = Cursor.fromWebSafeString(cursorString);
-				HashMap<String, Object> extensionMap = new HashMap<String, Object>();
-				extensionMap.put(JDOCursorHelper.CURSOR_EXTENSION, cursor);
-				query.setExtensions(extensionMap);
+				//HashMap<String, Object> extensionMap = new HashMap<String, Object>();
+				//extensionMap.put(JDOCursorHelper.CURSOR_EXTENSION, cursor);
+				//query.setExtensions(extensionMap);
+				query.setHint(JPACursorHelper.CURSOR_HINT, cursor);
 			}
 
 			if (limit != null) {
-				query.setRange(0, limit);
+				query.setFirstResult(0); 
+				query.setMaxResults(limit);
 			}
 
-			execute = (List<addMarker>) query.execute();
-			cursor = JDOCursorHelper.getCursor(execute);
+			execute = (List<Addmarker>) query.getResultList();
+			cursor = JPACursorHelper.getCursor(execute);
 			if (cursor != null)
 				cursorString = cursor.toWebSafeString();
 
 			// Tight loop for fetching all entities from datastore and accomodate
 			// for lazy fetch.
-			for (addMarker obj : execute)
-				;
+			for (Addmarker obj : execute);
 		} finally {
 			mgr.close();
 		}
 
-		return CollectionResponse.<addMarker> builder().setItems(execute)
-				.setNextPageToken(cursorString).build();
+		return CollectionResponse.<Addmarker>builder()
+				.setItems(execute).setNextPageToken(cursorString).build();
 	}
 
 	/**
@@ -76,16 +77,16 @@ public class AddmarkerEndpoint {
 	 * @param id the primary key of the java bean.
 	 * @return The entity with primary key id.
 	 */
-	@ApiMethod(name = "getaddMarker")
-	public addMarker getaddMarker(@Named("id") Long id) {
-		PersistenceManager mgr = getPersistenceManager();
-		addMarker addmarker = null;
+	@ApiMethod(name = "getAddmarker")
+	public Addmarker getAddmarker(@Named("id") Long id) {
+		EntityManager mgr = getEntityManager();
+		Addmarker Addmarker = null;
 		try {
-			addmarker = mgr.getObjectById(addMarker.class, id);
+			Addmarker = mgr.find(Addmarker.class, id);
 		} finally {
 			mgr.close();
 		}
-		return addmarker;
+		return Addmarker;
 	}
 
 	/**
@@ -93,21 +94,23 @@ public class AddmarkerEndpoint {
 	 * exists in the datastore, an exception is thrown.
 	 * It uses HTTP POST method.
 	 *
-	 * @param addmarker the entity to be inserted.
+	 * @param Addmarker the entity to be inserted.
 	 * @return The inserted entity.
 	 */
-	@ApiMethod(name = "insertaddMarker")
-	public addMarker insertaddMarker(addMarker addmarker) {
-		PersistenceManager mgr = getPersistenceManager();
+	@ApiMethod(name = "insertAddmarker")
+	public Addmarker insertAddmarker(Addmarker Addmarker) {
+		EntityManager mgr = getEntityManager();
 		try {
-			if (containsaddMarker(addmarker)) {
+			/**
+			if (containsAddmarker(Addmarker)) {
 				throw new EntityExistsException("Object already exists");
 			}
-			mgr.makePersistent(addmarker);
+			*/
+			mgr.persist(Addmarker);
 		} finally {
 			mgr.close();
 		}
-		return addmarker;
+		return Addmarker;
 	}
 
 	/**
@@ -115,21 +118,21 @@ public class AddmarkerEndpoint {
 	 * exist in the datastore, an exception is thrown.
 	 * It uses HTTP PUT method.
 	 *
-	 * @param addmarker the entity to be updated.
+	 * @param Addmarker the entity to be updated.
 	 * @return The updated entity.
 	 */
-	@ApiMethod(name = "updateaddMarker")
-	public addMarker updateaddMarker(addMarker addmarker) {
-		PersistenceManager mgr = getPersistenceManager();
+	@ApiMethod(name = "updateAddmarker")
+	public Addmarker updateAddmarker(Addmarker Addmarker) {
+		EntityManager mgr = getEntityManager();
 		try {
-			if (!containsaddMarker(addmarker)) {
+			if (!containsAddmarker(Addmarker)) {
 				throw new EntityNotFoundException("Object does not exist");
 			}
-			mgr.makePersistent(addmarker);
+			mgr.persist(Addmarker);
 		} finally {
 			mgr.close();
 		}
-		return addmarker;
+		return Addmarker;
 	}
 
 	/**
@@ -138,32 +141,33 @@ public class AddmarkerEndpoint {
 	 *
 	 * @param id the primary key of the entity to be deleted.
 	 */
-	@ApiMethod(name = "removeaddMarker")
-	public void removeaddMarker(@Named("id") Long id) {
-		PersistenceManager mgr = getPersistenceManager();
+	@ApiMethod(name = "removeAddmarker")
+	public void removeAddmarker(@Named("id") Long id) {
+		EntityManager mgr = getEntityManager();
 		try {
-			addMarker addmarker = mgr.getObjectById(addMarker.class, id);
-			mgr.deletePersistent(addmarker);
+			Addmarker Addmarker = mgr.find(Addmarker.class, id);
+			mgr.remove(Addmarker);
 		} finally {
 			mgr.close();
 		}
 	}
 
-	private boolean containsaddMarker(@Named("id") Long id) {
-		PersistenceManager mgr = getPersistenceManager();
+	private boolean containsAddmarker(Addmarker Addmarker) {
+		EntityManager mgr = getEntityManager();
 		boolean contains = true;
 		try {
-			addMarker addmarker = mgr.getObjectById(addMarker.class, id);
-		} catch (javax.jdo.JDOObjectNotFoundException ex) {
-			contains = false;
+			Addmarker marker = mgr.find(Addmarker.class, Addmarker.getKey());
+			if (marker == null) {
+				contains = false;
+			}
 		} finally {
 			mgr.close();
 		}
 		return contains;
 	}
 
-	private static PersistenceManager getPersistenceManager() {
-		return PMF.get().getPersistenceManager();
+	private static EntityManager getEntityManager() {
+		return EMF.get().createEntityManager();
 	}
 
 }

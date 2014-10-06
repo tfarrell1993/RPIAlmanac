@@ -14,8 +14,8 @@ public class Addmarker {
 	private Key key;
 	private String markerName;
 	private String markerType;
-	private int markerLat;
-	private int markerLong;
+	private Double markerLat;
+	private Double markerLong;
 	
 	public Key getKey() {
 		return key;
@@ -29,11 +29,11 @@ public class Addmarker {
 		this.markerType = markerType;
 	}
 	
-	public void setMarkerLat(int markerLat) {
+	public void setMarkerLat(Double markerLat) {
 		this.markerLat = markerLat;
 	}
 	
-	public void setMarkerLong(int markerLong) {
+	public void setMarkerLong(Double markerLong) {
 		this.markerLong = markerLong;
 	}
 }
