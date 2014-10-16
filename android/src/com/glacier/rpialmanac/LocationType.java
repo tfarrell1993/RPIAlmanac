@@ -4,5 +4,5 @@ public enum LocationType {
 	Academic,
 	Food,
 	Landmark,
-	UniversityBuidling
+	UniversityBuilding
 }
