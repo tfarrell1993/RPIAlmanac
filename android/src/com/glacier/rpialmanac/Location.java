@@ -2,11 +2,11 @@ package com.glacier.rpialmanac;
 
 public class Location {
 	private String name;
-	private long lattitude, longitude;
+	private double lattitude, longitude;
 	private String address;
 	private LocationType locationType;
 	
-	public Location(String aName, long aLattitude, long aLongitude, String aAddress, LocationType aLocationType) {
+	public Location(String aName, double aLattitude, double aLongitude, String aAddress, LocationType aLocationType) {
 		name = aName;
 		lattitude = aLattitude;
 		longitude = aLongitude;
@@ -18,11 +18,11 @@ public class Location {
 		return name;
 	}
 	
-	public long getLattitude() {
+	public double getLattitude() {
 		return lattitude;
 	}
 	
-	public long getLongitude() {
+	public double getLongitude() {
 		return longitude;
 	}
 	
@@ -38,11 +38,11 @@ public class Location {
 		name = aName;
 	}
 	
-	public void setLattitude(long aLattitude) {
+	public void setLattitude(double aLattitude) {
 		lattitude = aLattitude;
 	}
 	
-	public void setLongitude(long aLongitude) {
+	public void setLongitude(double aLongitude) {
 		longitude = aLongitude;
 	}
 	
