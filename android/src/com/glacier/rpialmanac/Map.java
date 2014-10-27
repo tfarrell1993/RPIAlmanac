@@ -35,11 +35,11 @@ public class Map extends Activity {
         final GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(42.729861, -73.676767), 16));
         
-        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
         	@Override
-            public void onMapClick(LatLng point) {
+            public void onMapLongClick(LatLng point) {
                 MarkerOptions marker = new MarkerOptions().position(
-                        new LatLng(point.latitude, point.longitude)).title("New Marker");
+                        new LatLng(point.latitude, point.longitude)).title("New Marker").draggable(true);
                 map.addMarker(marker);
             }
         });
