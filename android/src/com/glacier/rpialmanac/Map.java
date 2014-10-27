@@ -32,13 +32,24 @@ public class Map extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        final GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(42.729861, -73.676767), 16));
+        
+        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        	@Override
+            public void onMapClick(LatLng point) {
+                MarkerOptions marker = new MarkerOptions().position(
+                        new LatLng(point.latitude, point.longitude)).title("New Marker");
+                map.addMarker(marker);
+            }
+        });
+        
         //new AddLocation().execute();
         //resultView = (TextView) findViewById(R.id.result);
         new addLocation().execute("");
-        map.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.common_ic_googleplayservices)).anchor(0.0f, 1.0f).title("RPI Union").position(new LatLng(42.729861, -73.676767))); // Anchors the marker on the bottom left
+        map.addMarker(new MarkerOptions().anchor(0.5f, 1.0f).title("RPI Union").position(new LatLng(42.729861, -73.676767))); // Anchors the marker on the bottom left
     }
+    
    
     @Override
         public boolean onCreateOptionsMenu(Menu menu) {
