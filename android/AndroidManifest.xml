@@ -30,6 +30,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".AddLocationActivity"
+            android:label="@string/title_activity_add_location" 
+            android:parentActivityName="com.glacier.rpialmanac.Map" >
+            <meta-data 
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.glacier.rpialmanac.Map" />
+        </activity>
     	<meta-data
     		android:name="com.google.android.maps.v2.API_KEY"
     		android:value="AIzaSyBjqEA5cpSOTyiOxlO8bm6RXidpOOMWZBI"/>

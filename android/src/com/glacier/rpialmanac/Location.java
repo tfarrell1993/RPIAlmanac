@@ -2,27 +2,35 @@ package com.glacier.rpialmanac;
 
 public class Location {
 	private String name;
-	private double lattitude, longitude;
+	private Double latitude, longitude;
 	private String address;
 	private LocationType locationType;
 	
-	public Location(String aName, double aLattitude, double aLongitude, String aAddress, LocationType aLocationType) {
+	public Location(String aName, Double alatitude, Double aLongitude, String aAddress, LocationType aLocationType) {
 		name = aName;
-		lattitude = aLattitude;
+		latitude = alatitude;
 		longitude = aLongitude;
 		address = aAddress;
 		locationType = aLocationType;
+	}
+	
+	public Location(){
+		name = "";
+		latitude = 0.0;
+		longitude = 0.0;
+		address = "";
+		locationType = null;
 	}
 	
 	public String getName() {
 		return name;
 	}
 	
-	public double getLattitude() {
-		return lattitude;
+	public Double getlatitude() {
+		return latitude;
 	}
 	
-	public double getLongitude() {
+	public Double getLongitude() {
 		return longitude;
 	}
 	
@@ -38,11 +46,11 @@ public class Location {
 		name = aName;
 	}
 	
-	public void setLattitude(double aLattitude) {
-		lattitude = aLattitude;
+	public void setlatitude(Double alatitude) {
+		latitude = alatitude;
 	}
 	
-	public void setLongitude(double aLongitude) {
+	public void setLongitude(Double aLongitude) {
 		longitude = aLongitude;
 	}
 	
