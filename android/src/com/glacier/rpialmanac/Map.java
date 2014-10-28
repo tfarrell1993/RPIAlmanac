@@ -54,13 +54,26 @@ public class Map extends Activity implements OnClickListener {
         //addLoc.setOnClickListener(this);
         try {
 			ArrayList<Location> locations = RetrieveLocations.getLocations();
-			GoogleMap map = ((MapFragment) getFragmentManager()
+			final GoogleMap map = ((MapFragment) getFragmentManager()
 	                .findFragmentById(R.id.map)).getMap();
 			for (int i = 0; i < locations.size(); i++)
 			{
 			Location location = locations.get(i);
 			map.addMarker(new MarkerOptions().position(new LatLng(location.getlatitude(), location.getLongitude())).title(location.getName()));
 			}
+			
+			//Allows user to long click on map to add new location
+			map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+	        	@Override
+	            public void onMapLongClick(LatLng point) {
+	                MarkerOptions marker = new MarkerOptions().position(
+	                        new LatLng(point.latitude, point.longitude))
+	                        .title("New Marker")
+	                        .draggable(true)
+	                        .snippet("This is a test snippit");
+	                map.addMarker(marker);
+	            }
+	        });
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
