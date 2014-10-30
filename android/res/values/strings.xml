@@ -17,5 +17,9 @@
         <item>Landmark</item>
         <item>UniversityBuilding</item>
     </string-array>
+    <string name="retry_retrieve_message">Failed to retrieve locations.</string>
+    <string name="retry_retrieve_yes">Retry</string>
+    <string name="retry_retrieve_no">Cancel</string>
+    <string name="retrieving_locations">Retrieving locations&#8230;</string>
 
 </resources>

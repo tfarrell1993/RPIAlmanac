@@ -7,7 +7,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.AsyncTask;
@@ -80,14 +84,21 @@ public class Map extends Activity {
     	
     	protected void onPreExecute() {
     		pDialog = new ProgressDialog(Map.this);
-    		pDialog.setMessage("Retrieving locations...");
+    		pDialog.setMessage(getString(R.string.retrieving_locations));
     		pDialog.setIndeterminate(false);
     		pDialog.setCancelable(true);
     		pDialog.show();
     	}
 
 		protected Void doInBackground(Void... params) {
-			locations = RetrieveLocations.getAllLocations();
+			while (true) {
+				locations = RetrieveLocations.getAllLocations();
+				if (locations == null) {
+					Log.e("GLACIER", "locations null");
+					new RetryRetrievalDialog().show(getFragmentManager(), "retry_retrieval");
+				}
+				break;
+			}
 			
 			return null;
 		}
@@ -96,6 +107,22 @@ public class Map extends Activity {
 			Map.this.displayAllPins();
 			pDialog.dismiss();
 		}
-    	
     }
+    
+    private class RetryRetrievalDialog extends DialogFragment {
+		public Dialog onCreateDialog(Bundle savedState) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setMessage(R.string.retry_retrieve_message)
+				.setPositiveButton(R.string.retry_retrieve_yes, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						new LocationRetriever().execute();
+					}
+				})
+				.setNegativeButton(R.string.retry_retrieve_no, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) { }
+				});
+			
+			return builder.create();
+		}
+	}
 }
