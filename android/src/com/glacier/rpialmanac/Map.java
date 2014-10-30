@@ -39,7 +39,10 @@ public class Map extends Activity {
         	@Override
             public void onMapLongClick(LatLng point) {
                 MarkerOptions marker = new MarkerOptions().position(
-                        new LatLng(point.latitude, point.longitude)).title("New Marker").draggable(true);
+                        new LatLng(point.latitude, point.longitude))
+                        .title("New Marker")
+                        .draggable(true)
+                        .snippet("This is a test snippit");
                 map.addMarker(marker);
             }
         });
