@@ -3,5 +3,20 @@
 
     <string name="app_name">RPI Almanac</string>
     <string name="action_settings">Settings</string>
+    <string name="TextView">TextView</string>
+    <string name="addLocation">Confirm</string>
+    <string name="deleteLocation">Delete</string>
+    <string name="title_activity_add_location">AddLocationActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="locName">Enter location name</string>
+    <string name="locAddr">Enter location address</string>
+    <string name="submit">Submit</string>
+    
+    <string-array name="type_array">
+        <item>Academic</item>
+        <item>Food</item>
+        <item>Landmark</item>
+        <item>University Building</item>
+    </string-array>
 
 </resources>

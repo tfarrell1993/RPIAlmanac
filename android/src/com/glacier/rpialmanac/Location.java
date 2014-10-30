@@ -2,27 +2,35 @@ package com.glacier.rpialmanac;
 
 public class Location {
 	private String name;
-	private double lattitude, longitude;
+	private Double latitude, longitude;
 	private String address;
-	private LocationType locationType;
+	private String locationType;
 	
-	public Location(String aName, double aLattitude, double aLongitude, String aAddress, LocationType aLocationType) {
+	public Location(String aName, Double aLatitude, Double aLongitude, String aAddress, String locType) {
 		name = aName;
-		lattitude = aLattitude;
+		latitude = aLatitude;
 		longitude = aLongitude;
 		address = aAddress;
-		locationType = aLocationType;
+		locationType = locType;
+	}
+	
+	public Location(){
+		name = "";
+		latitude = 0.0;
+		longitude = 0.0;
+		address = "";
+		locationType = null;
 	}
 	
 	public String getName() {
 		return name;
 	}
 	
-	public double getLattitude() {
-		return lattitude;
+	public Double getLatitude() {
+		return latitude;
 	}
 	
-	public double getLongitude() {
+	public Double getLongitude() {
 		return longitude;
 	}
 	
@@ -30,7 +38,7 @@ public class Location {
 		return address;
 	}
 	
-	public LocationType getLocationType() {
+	public String getLocationType() {
 		return locationType;
 	}
 	
@@ -38,11 +46,11 @@ public class Location {
 		name = aName;
 	}
 	
-	public void setLattitude(double aLattitude) {
-		lattitude = aLattitude;
+	public void setlatitude(Double alatitude) {
+		latitude = alatitude;
 	}
 	
-	public void setLongitude(double aLongitude) {
+	public void setLongitude(Double aLongitude) {
 		longitude = aLongitude;
 	}
 	
@@ -50,7 +58,7 @@ public class Location {
 		address = aAddress;
 	}
 	
-	public void setLocationType(LocationType aLocationType) {
+	public void setLocationType(String aLocationType) {
 		locationType = aLocationType;
 	}
 }
