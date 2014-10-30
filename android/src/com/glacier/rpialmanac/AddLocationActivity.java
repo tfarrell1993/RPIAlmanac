@@ -101,7 +101,7 @@ public class AddLocationActivity extends Activity implements OnClickListener{
 			String locAddr = addr.getText().toString();
 			String locType = typeSpinner.getSelectedItem().toString();
 			//Location aLocation = new Location(locName,42.740627,-73.678837,locAddr,locType);
-			Location aLocation = new Location(locName,42.740627,-73.678837,locAddr,LocationType.Academic);
+			Location aLocation = new Location(locName,42.740627,-73.678837,locAddr, "");
 			Gson gson = new Gson();
 			String jsonStr = gson.toJson(aLocation);
 			

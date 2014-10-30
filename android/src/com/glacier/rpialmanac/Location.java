@@ -4,9 +4,9 @@ public class Location {
 	private String name;
 	private Double latitude, longitude;
 	private String address;
-	private LocationType locationType;
+	private String locationType;
 	
-	public Location(String aName, Double alatitude, Double aLongitude, String aAddress, LocationType aLocationType) {
+	public Location(String aName, Double alatitude, Double aLongitude, String aAddress, String aLocationType) {
 		name = aName;
 		latitude = alatitude;
 		longitude = aLongitude;
@@ -26,7 +26,7 @@ public class Location {
 		return name;
 	}
 	
-	public Double getlatitude() {
+	public Double getLatitude() {
 		return latitude;
 	}
 	
@@ -38,7 +38,7 @@ public class Location {
 		return address;
 	}
 	
-	public LocationType getLocationType() {
+	public String getLocationType() {
 		return locationType;
 	}
 	
@@ -58,7 +58,7 @@ public class Location {
 		address = aAddress;
 	}
 	
-	public void setLocationType(LocationType aLocationType) {
+	public void setLocationType(String aLocationType) {
 		locationType = aLocationType;
 	}
 }
