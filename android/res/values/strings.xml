@@ -11,12 +11,14 @@
     <string name="locName">Enter location name</string>
     <string name="locAddr">Enter location address</string>
     <string name="submit">Submit</string>
-    
+
     <string-array name="type_array">
         <item>Academic</item>
         <item>Food</item>
         <item>Landmark</item>
         <item>University Building</item>
     </string-array>
+
+    <string name="title_activity_location_info_window">LocationInfoWindow</string>
 
 </resources>

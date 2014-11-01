@@ -17,6 +17,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
  
@@ -89,7 +90,7 @@ public class JSONParser {
 			Log.e("JSON Parser", "Error parsing data " + e.toString());
 		}
 		 
-		// Return the JSON Object.
+		// Return the JSON Array.
 		return jObj;
 		 
 	}

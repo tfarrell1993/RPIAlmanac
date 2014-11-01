@@ -4,10 +4,14 @@ import java.util.ArrayList;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.google.gson.Gson;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,9 +32,13 @@ public class AddLocationActivity extends Activity implements OnClickListener{
 	private Spinner typeSpinner;
 	private Button submit;
 	Double lat, lng;
+	Location location;
+	int success;
 	
 	// JSON parser class
 	JSONParser jsonParser = new JSONParser();
+	//JSON object from server
+	JSONObject json;
 	private static final String POST_URL = "http://glacier.net76.net/post.php";
 	private static final String TAG_SUCCESS = "success";
 	private static final String TAG_MESSAGE = "message";
@@ -72,6 +80,13 @@ public class AddLocationActivity extends Activity implements OnClickListener{
 	    	int id = v.getId();
 			if (id == R.id.submit) {
 				new AddLocation().execute();
+				
+				while(success == 0);
+				Intent intent = new Intent();
+				intent.putExtra("success",success);
+				Log.v("GLACIER", new Gson().toJson(location));
+				intent.putExtra("jsonLocation", new Gson().toJson(location));
+				setResult(RESULT_OK, intent);
 				finish();
 			}
 	    }
@@ -90,7 +105,6 @@ public class AddLocationActivity extends Activity implements OnClickListener{
     	@Override
     	protected String doInBackground(String... args) {
     	
-    		int success;
 	    	String locName = name.getText().toString();
 			String locAddr = addr.getText().toString();
 			String locType = typeSpinner.getSelectedItem().toString();
@@ -102,10 +116,10 @@ public class AddLocationActivity extends Activity implements OnClickListener{
 				params.add(new BasicNameValuePair("type", locType));
 				params.add(new BasicNameValuePair("latitude", lat.toString()));
 				params.add(new BasicNameValuePair("longitude", lng.toString()));
-				JSONObject json = jsonParser.makeHttpRequest(POST_URL, "POST", params);
+				json = jsonParser.makeHttpRequest(POST_URL, "POST", params);
 				
 				success = json.getInt(TAG_SUCCESS);
-				Log.d("GLACIER",json.getString(TAG_MESSAGE));
+				location = new Location(locName,lat,lng,locAddr,locType);
 			}
 			catch(Exception e){
 				e.printStackTrace();
