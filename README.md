@@ -1,4 +1,4 @@
 RPIAlmanac
 ==========
 
-SD&amp;D Project
+Project Website: http://tfarrell1993.github.io/RPIAlmanac/
