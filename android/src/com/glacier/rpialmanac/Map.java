@@ -26,17 +26,23 @@ import android.widget.TextView;
 
 public class Map extends Activity implements OnInfoWindowClickListener{
 
+	// Storing locations
 	private static ArrayList<Location> locations = null;
 	private static HashMap<Marker, Location> markerLocationMap;
-	JSONParser jsonParser = new JSONParser();
-	//Progress Dialog
+	
+	// Progress Dialog
 	private ProgressDialog pDialog;
+	
+	// Views
 	private Button addLoc, deleteLoc;
-	MarkerOptions markerOpt;
-	Marker newMarker;
-	Double lat,lng;
-	int success;
 	GoogleMap map;
+	
+	// Potential new marker data
+	Marker newMarker;
+	Double newMarkerLat, newMarkerLng;
+	int addLocationSuccess;
+	
+	
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +66,9 @@ public class Map extends Activity implements OnInfoWindowClickListener{
         map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
         	@Override
             public void onMapLongClick(LatLng point) {
-        		lat = point.latitude;
-        		lng = point.longitude;
-                markerOpt = new MarkerOptions().position(new LatLng(lat, lng)).title("New Marker").draggable(true);
+        		newMarkerLat = point.latitude;
+        		newMarkerLng = point.longitude;
+        		MarkerOptions markerOpt = new MarkerOptions().position(new LatLng(newMarkerLat, newMarkerLng)).title("New Marker").draggable(true);
                 newMarker = map.addMarker(markerOpt);
                 addLoc.setVisibility(View.VISIBLE);
                 deleteLoc.setVisibility(View.VISIBLE);
@@ -84,7 +90,6 @@ public class Map extends Activity implements OnInfoWindowClickListener{
     		return;
     	}
     	
-    	final GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
     	map.setInfoWindowAdapter(new LocationBubble());
     	map.clear();
     	markerLocationMap = new HashMap<Marker, Location>();
@@ -102,9 +107,9 @@ public class Map extends Activity implements OnInfoWindowClickListener{
     	Bundle b = new Bundle();
     	
     	//Bundles latitude and longitude position to send to AddLocation activity
-        if(lat!=null && lng!=null){
-	    	b.putDouble("latitude", lat);
-	    	b.putDouble("longitude", lng);
+        if(newMarkerLat!=null && newMarkerLng!=null){
+	    	b.putDouble("latitude", newMarkerLat);
+	    	b.putDouble("longitude", newMarkerLng);
 	    	intent.putExtras(b);
 	    	startActivityForResult(intent,90);
         }
@@ -118,19 +123,19 @@ public class Map extends Activity implements OnInfoWindowClickListener{
     		if(resultCode == RESULT_OK) {
     			Bundle res = data.getExtras();
     			if(res != null) {
-    				success = res.getInt("success");
-        			Log.v("GLACIER", "Success after activity return: " + success);
+    				addLocationSuccess = res.getInt("success");
+        			Log.v("GLACIER", "Success after activity return: " + addLocationSuccess);
         			String json = res.getString("jsonLocation");
         			Location location = new Gson().fromJson(json, Location.class);
         			Log.v("GLACIER","Name: " + location.getName());
         			
-        			if(success == 1){
+        			if(addLocationSuccess == 1){
         				locations.add(location);
         				
         				//Hides confirm and delete buttons, centers camera on new marker, and shows the info window
         	            addLoc.setVisibility(View.INVISIBLE);
         	            deleteLoc.setVisibility(View.INVISIBLE);
-        	            map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 17));
+        	            map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(newMarkerLat, newMarkerLng), 17));
         	            newMarker.setSnippet("Click to read more");
         	            newMarker.setTitle(location.getName());
         	            newMarker.showInfoWindow();
@@ -179,7 +184,6 @@ public class Map extends Activity implements OnInfoWindowClickListener{
 	@Override
 	public void onInfoWindowClick(Marker marker) {
 		Intent intent = new Intent(Map.this, LocationInfoWindow.class);
-		Bundle b = new Bundle();
 		
 		for(int i = 0; i<locations.size(); i++){
 			Location location = locations.get(i);
