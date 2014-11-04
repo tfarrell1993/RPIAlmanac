@@ -1,12 +1,11 @@
 package com.glacier.rpialmanac;
 
 import java.util.ArrayList;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.HashMap;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -23,10 +22,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class Map extends Activity implements OnInfoWindowClickListener{
 
 	private static ArrayList<Location> locations = null;
+	private static HashMap<Marker, Location> markerLocationMap;
 	JSONParser jsonParser = new JSONParser();
 	//Progress Dialog
 	private ProgressDialog pDialog;
@@ -84,11 +85,14 @@ public class Map extends Activity implements OnInfoWindowClickListener{
     	}
     	
     	final GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+    	map.setInfoWindowAdapter(new LocationBubble());
     	map.clear();
+    	markerLocationMap = new HashMap<Marker, Location>();
     	for (int i = 0; i < locations.size(); i++) {
     		Location location = locations.get(i);
-    		map.addMarker(new MarkerOptions().title(location.getName())
-    		.position(new LatLng(location.getLatitude(), location.getLongitude())).snippet("Click to read more"));
+    		Marker marker = map.addMarker(new MarkerOptions().title(location.getName())
+    				.position(new LatLng(location.getLatitude(), location.getLongitude())).snippet("Click to read more"));
+    		markerLocationMap.put(marker, location);
     	}
     }
     
@@ -174,7 +178,7 @@ public class Map extends Activity implements OnInfoWindowClickListener{
 	//If info window is clicked, open new LocationInfoWindow class
 	@Override
 	public void onInfoWindowClick(Marker marker) {
-		Intent intent = new Intent(Map.this,LocationInfoWindow.class);
+		Intent intent = new Intent(Map.this, LocationInfoWindow.class);
 		Bundle b = new Bundle();
 		
 		for(int i = 0; i<locations.size(); i++){
@@ -184,5 +188,26 @@ public class Map extends Activity implements OnInfoWindowClickListener{
 				startActivity(intent);	
 			}
 		}	
-	}	
+	}
+	
+	private class LocationBubble implements InfoWindowAdapter {
+
+		public View getInfoContents(Marker marker) {
+			View view = getLayoutInflater().inflate(R.layout.bubble, null);
+			Location location = markerLocationMap.get(marker);
+			
+			TextView titleView = (TextView)view.findViewById(R.id.bubble_title);
+			titleView.setText(location.getName());
+			
+			TextView categoryView = (TextView)view.findViewById(R.id.bubble_category);
+			categoryView.setText(location.getLocationType());
+			
+			return view;
+		}
+
+		public View getInfoWindow(Marker marker) {
+			return null;
+		}
+
+	}
 }

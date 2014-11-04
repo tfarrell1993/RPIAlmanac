@@ -20,5 +20,6 @@
     </string-array>
 
     <string name="title_activity_location_info_window">LocationInfoWindow</string>
+    <string name="tap_to_view_details">Tap to view details</string>
 
 </resources>
