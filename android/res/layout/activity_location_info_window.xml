@@ -9,8 +9,58 @@
     tools:context="com.glacier.rpialmanac.LocationInfoWindow" >
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/locName"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:textSize="20sp" />
+    
+    <TextView
+        android:id="@+id/locAddr"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/locName"
+        android:textSize="16sp" />
+    
+    <TextView
+        android:id="@+id/locType"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/locAddr"
+        android:textSize="16sp" />
+    
+    <EditText
+        android:id="@+id/newComment"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/locType"
+        android:hint="@string/newComment"
+        android:textSize="14sp" />
+    
+    <Button
+        android:id="@+id/postComment"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/newComment"
+        android:gravity="center_horizontal"
+        android:textSize="16sp" />
+    
+    <ListView
+        android:id="@+id/commentList"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/postComment" />
 
 </RelativeLayout>

@@ -1,13 +1,54 @@
 package com.glacier.rpialmanac;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.google.gson.Gson;
 
 import android.app.Activity;
+import android.app.ListActivity;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 
 public class LocationInfoWindow extends Activity {
+	
+	private static final String POST_URL = "http://glacier.net76.net/postComment.php";
+	private static final String TAG_SUCCESS = "success";
+	private ProgressDialog pDialog;
+	private TextView name, addr, type;
+	private EditText newComment;
+	private Button postComment;
+	private ListView commentList;
+	private int success = 0;
+	private ArrayList<String> comments = new ArrayList<String>();
+	Location location;
+	
+	// JSON parser class
+	JSONParser jsonParser = new JSONParser();
+	//JSON object from server
+	JSONObject json;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -18,9 +59,46 @@ public class LocationInfoWindow extends Activity {
 		String jsonMyObject = "";
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
-		   jsonMyObject = b.getString("myObject");
+		   jsonMyObject = b.getString("jsonLocation");
 		}
-		Location location = new Gson().fromJson(jsonMyObject, Location.class);
+		location = new Gson().fromJson(jsonMyObject, Location.class);
+		
+		name = (TextView)findViewById(R.id.locName);
+		name.setText(location.getName());
+		addr = (TextView)findViewById(R.id.locAddr);
+		addr.setText("  " + location.getAddress());
+		type = (TextView)findViewById(R.id.locType);
+		type.setText("  " + location.getLocationType());
+		
+		// New comment text box
+		newComment = (EditText)findViewById(R.id.newComment);
+		
+		// Post comment button
+		postComment = (Button)findViewById(R.id.postComment);
+		postComment.setText("Post Comment");
+		
+		// Prepare comment list adapter to load comments
+		commentList = (ListView)findViewById(R.id.commentList);
+		CommentListAdapter adapter = new CommentListAdapter(this, location.getKey());
+	    commentList.setAdapter(adapter);
+		
+	    // Listener for post comment button
+		postComment.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if(newComment.getText().toString() != "") {
+					new postComment().execute();
+					
+					//Must do in order to wait for server response
+					//there is probably a better way to do it
+					while(success == 0);
+					
+					// handles newly added comment
+					displayNewComment();
+				}
+			}
+		});
 	}
 
 	@Override
@@ -40,5 +118,60 @@ public class LocationInfoWindow extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+	}
+	
+	public void displayNewComment() {
+		//Check for successful add from server
+		if(success == 1) {
+			comments.add(newComment.getText().toString());
+			Log.v("GLACIER",newComment.getText().toString());
+			newComment.setText(null);
+		}
+		
+	}
+	
+	private class postComment extends AsyncTask<Void, Integer, Void> {
+			
+		//Displays a progress pinwheel
+		protected void onPreExecute() {
+    		pDialog = new ProgressDialog(LocationInfoWindow.this);
+    		pDialog.setMessage("Posting comment...");
+    		pDialog.setIndeterminate(false);
+    		pDialog.setCancelable(true);
+    		pDialog.show();
+    	}
+		
+		//Post comment to database
+		protected Void doInBackground(Void... args) {
+			ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+			String comm = newComment.getText().toString();
+			params.add(new BasicNameValuePair("id", Integer.toString(location.getKey())));
+			params.add(new BasicNameValuePair("comment", comm));
+			json = jsonParser.makeHttpRequest(POST_URL, "POST", params);		
+			Log.v("GLACIER",json.toString());
+			try {
+				success = Integer.parseInt(json.getString(TAG_SUCCESS));
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			//displayNewComment();
+			
+			return null;
+		}
+		
+		//After posting new comment close progress dialog
+		protected void onPostExecute(Void param) {
+			pDialog.dismiss();
+		}
 	}
 }

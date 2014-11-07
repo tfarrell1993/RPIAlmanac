@@ -85,7 +85,7 @@ public class RetrieveLocations {
 			}
 			try {
 				Location location = new Location(jsonObject.getString("name"), Double.parseDouble(jsonObject.getString("latitude")),
-						Double.parseDouble(jsonObject.getString("longitude")), jsonObject.getString("address"), jsonObject.getString("type"));
+						Double.parseDouble(jsonObject.getString("longitude")), jsonObject.getString("address"), jsonObject.getString("type"), jsonObject.getInt("id"));
 				locations.add(location);
 			} catch (Exception e) {
 				// JSON or number format issue

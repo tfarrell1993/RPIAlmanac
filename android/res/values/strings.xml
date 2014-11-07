@@ -6,11 +6,14 @@
     <string name="TextView">TextView</string>
     <string name="addLocation">Confirm</string>
     <string name="deleteLocation">Delete</string>
-    <string name="title_activity_add_location">AddLocationActivity</string>
+    <string name="title_activity_add_location">Add Location</string>
     <string name="hello_world">Hello world!</string>
     <string name="locName">Enter location name</string>
     <string name="locAddr">Enter location address</string>
     <string name="submit">Submit</string>
+    <string name="title_activity_location_info_window">Location Info</string>
+    <string name="newComment">Enter your comment here</string>
+    <string name="tap_to_view_details">Tap to view details</string>
 
     <string-array name="type_array">
         <item>Academic</item>
@@ -18,8 +21,5 @@
         <item>Landmark</item>
         <item>University Building</item>
     </string-array>
-
-    <string name="title_activity_location_info_window">LocationInfoWindow</string>
-    <string name="tap_to_view_details">Tap to view details</string>
 
 </resources>

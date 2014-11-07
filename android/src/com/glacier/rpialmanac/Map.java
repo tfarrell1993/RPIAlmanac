@@ -29,8 +29,8 @@ public class Map extends Activity implements OnInfoWindowClickListener{
 	// Storing locations
 	private static ArrayList<Location> locations = null;
 	private static HashMap<Marker, Location> markerLocationMap;
-	
-	// Progress Dialog
+
+	//Progress Dialog
 	private ProgressDialog pDialog;
 	
 	// Views
@@ -41,8 +41,6 @@ public class Map extends Activity implements OnInfoWindowClickListener{
 	Marker newMarker;
 	Double newMarkerLat, newMarkerLng;
 	int addLocationSuccess;
-	
-	
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +59,7 @@ public class Map extends Activity implements OnInfoWindowClickListener{
         
         //Listener for when user clicks on marker info window
         map.setOnInfoWindowClickListener(this);
+        map.clear();
         
         //User long clicks on map. Drops new draggable marker. Add and delete button visible
         map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
@@ -69,7 +68,7 @@ public class Map extends Activity implements OnInfoWindowClickListener{
         		newMarkerLat = point.latitude;
         		newMarkerLng = point.longitude;
         		MarkerOptions markerOpt = new MarkerOptions().position(new LatLng(newMarkerLat, newMarkerLng)).title("New Marker").draggable(true);
-                newMarker = map.addMarker(markerOpt);
+        		newMarker = map.addMarker(markerOpt);
                 addLoc.setVisibility(View.VISIBLE);
                 deleteLoc.setVisibility(View.VISIBLE);
             }
@@ -89,7 +88,6 @@ public class Map extends Activity implements OnInfoWindowClickListener{
     		Log.w("GLACIER", "null locations");
     		return;
     	}
-    	
     	map.setInfoWindowAdapter(new LocationBubble());
     	map.clear();
     	markerLocationMap = new HashMap<Marker, Location>();
@@ -107,10 +105,12 @@ public class Map extends Activity implements OnInfoWindowClickListener{
     	Bundle b = new Bundle();
     	
     	//Bundles latitude and longitude position to send to AddLocation activity
-        if(newMarkerLat!=null && newMarkerLng!=null){
+    	if(newMarkerLat!=null && newMarkerLng!=null){
 	    	b.putDouble("latitude", newMarkerLat);
 	    	b.putDouble("longitude", newMarkerLng);
 	    	intent.putExtras(b);
+	    	
+	    	//Starts activity which returns an intent when finished
 	    	startActivityForResult(intent,90);
         }
     }
@@ -125,7 +125,7 @@ public class Map extends Activity implements OnInfoWindowClickListener{
     			if(res != null) {
     				addLocationSuccess = res.getInt("success");
         			Log.v("GLACIER", "Success after activity return: " + addLocationSuccess);
-        			String json = res.getString("jsonLocation");
+    				String json = res.getString("jsonLocation");
         			Location location = new Gson().fromJson(json, Location.class);
         			Log.v("GLACIER","Name: " + location.getName());
         			
@@ -184,7 +184,7 @@ public class Map extends Activity implements OnInfoWindowClickListener{
 	@Override
 	public void onInfoWindowClick(Marker marker) {
 		Intent intent = new Intent(Map.this, LocationInfoWindow.class);
-		
+
 		for(int i = 0; i<locations.size(); i++){
 			Location location = locations.get(i);
 			if(location.getLatitude() == marker.getPosition().latitude) {
@@ -192,7 +192,7 @@ public class Map extends Activity implements OnInfoWindowClickListener{
 				startActivity(intent);	
 			}
 		}	
-	}
+	}	
 	
 	private class LocationBubble implements InfoWindowAdapter {
 

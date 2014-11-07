@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.google.gson.Gson;
@@ -38,7 +37,7 @@ public class AddLocationActivity extends Activity implements OnClickListener{
 	JSONObject json;
 	private static final String POST_URL = "http://glacier.net76.net/post.php";
 	private static final String TAG_SUCCESS = "success";
-	private static final String TAG_MESSAGE = "message";
+	private static final String TAG_KEY = "id";
 	
 	// Progress Dialog
 	private ProgressDialog pDialog;
@@ -71,6 +70,11 @@ public class AddLocationActivity extends Activity implements OnClickListener{
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+	}
 		
 	 @Override
 	    public void onClick(View v) {
@@ -99,6 +103,7 @@ public class AddLocationActivity extends Activity implements OnClickListener{
 			 pDialog.setCancelable(true);
 			 pDialog.show();
 		 }
+		 
     	@Override
     	protected String doInBackground(String... args) {
     	
@@ -116,7 +121,8 @@ public class AddLocationActivity extends Activity implements OnClickListener{
 				json = jsonParser.makeHttpRequest(POST_URL, "POST", params);
 				
 				success = json.getInt(TAG_SUCCESS);
-				location = new Location(locName,lat,lng,locAddr,locType);
+				int key = json.getInt(TAG_KEY);
+				location = new Location(locName,lat,lng,locAddr,locType,key);
 			}
 			catch(Exception e){
 				e.printStackTrace();

@@ -5,13 +5,15 @@ public class Location {
 	private Double latitude, longitude;
 	private String address;
 	private String locationType;
+	private int key;
 	
-	public Location(String aName, Double aLatitude, Double aLongitude, String aAddress, String locType) {
+	public Location(String aName, Double aLatitude, Double aLongitude, String aAddress, String locType, int id) {
 		name = aName;
 		latitude = aLatitude;
 		longitude = aLongitude;
 		address = aAddress;
 		locationType = locType;
+		key = id;
 	}
 	
 	public Location(){
@@ -20,6 +22,7 @@ public class Location {
 		longitude = 0.0;
 		address = "";
 		locationType = null;
+		key = 0;
 	}
 	
 	public String getName() {
@@ -40,6 +43,10 @@ public class Location {
 	
 	public String getLocationType() {
 		return locationType;
+	}
+	
+	public int getKey() {
+		return key;
 	}
 	
 	public void setName(String aName) {

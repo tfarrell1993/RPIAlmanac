@@ -19,5 +19,5 @@
         android:textStyle="italic"
         android:text="@string/tap_to_view_details"
         android:layout_below="@+id/bubble_category"
-        android:layout_centerInParent="true" />
+        android:layout_centerInParent="true" />  
 </RelativeLayout>
