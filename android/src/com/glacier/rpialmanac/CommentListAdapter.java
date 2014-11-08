@@ -1,8 +1,20 @@
 package com.glacier.rpialmanac;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +36,7 @@ public class CommentListAdapter extends ArrayAdapter<String>{
 	private Context context;
 	ArrayList<String> comments = new ArrayList<String>();
 	int locId;
+	private String cleanJson = "";
 	
 	// JSON parser class
 	JSONParser jsonParser = new JSONParser();
@@ -34,13 +47,16 @@ public class CommentListAdapter extends ArrayAdapter<String>{
 		super(context,R.layout.rowlayout,id);
 		this.context = context;
 		locId = id;
-		Log.v("GLACIER","In adapter");
-		new CommentRetriever().execute();
+	}
+	
+	@Override
+	public int getCount() {
+	    // TODO Auto-generated method stub
+	    return comments.size();
 	}
 	
 	@Override
 	  public View getView(int position, View convertView, ViewGroup parent) {
-		
 		//Check if the convertview is null, if it is null it probably means that this 
 		//is the first time the view has been displayed
 		if(convertView == null) {
@@ -57,11 +73,37 @@ public class CommentListAdapter extends ArrayAdapter<String>{
 	    return convertView;
 	  }
 	
-	private ArrayList<String> parseCommentsFromJson(JSONObject jobj) {
+	public void getComments() {
+		comments.clear();
+		
+		//Retrieve comments
+		new CommentRetriever().execute();
+		
+		// Waits for response from server, should find better way to do this
+		while(cleanJson == "");
+		
+		// adds comma between curly braces so it can be made into jsonArray without errors
+		cleanJson = cleanJson.replace("}{","},{");
+		
+		// Parse comments from json
+		comments = parseCommentsFromJson(cleanJson);
+		
+		notifyDataSetChanged();
+	}
+	
+	@Override
+	public void add(String newComment) {
+		comments.add(0,newComment);
+		notifyDataSetChanged();
+	}
+	
+	// ***FIX*** to add comments to array in reverse order so they're chronological
+	//Also probably good idea to add a date column to comment database so it can be displayed with each comment
+	private ArrayList<String> parseCommentsFromJson(String json) {
 		ArrayList<String> comm = new ArrayList<String>();
 		JSONArray jsonArray;
 		try {
-			jsonArray = new JSONArray(jobj);
+			jsonArray = new JSONArray(json);
 		} catch (JSONException e) {
 			// Bad JSON
 			Log.w("GLACIER", "1");
@@ -78,7 +120,6 @@ public class CommentListAdapter extends ArrayAdapter<String>{
 			}
 			try {
 				String comment = jsonObject.getString("comment");
-				Log.v("GLACIER", comment);
 				comm.add(comment);
 			} catch (Exception e) {
 				// JSON or number format issue
@@ -103,16 +144,39 @@ public class CommentListAdapter extends ArrayAdapter<String>{
 		protected Void doInBackground(Void... args) {
 			ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("id", Integer.toString(locId)));
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpResponse httpResponse = null;
+			try {	
+				
+				HttpPost httpPost = new HttpPost(RETRIEVE_URL);
+				httpPost.setEntity(new UrlEncodedFormEntity(params));
+				httpResponse = httpClient.execute(httpPost);	
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
-			//Probably want to change to get at some point, but get does not work with params in JSONParser.java
-			json = jsonParser.makeHttpRequest(RETRIEVE_URL, "POST", params);
+			if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+				// Some other server-side issue
+				return null;
+			}
 			
-			// ******FIX ME********
-			//Only prints one comment. Probably because JSONParser.java only returns jsonobject with first comment
-			Log.v("GLACIER",json.toString());
-			comments = parseCommentsFromJson(json);
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			try {
+				httpResponse.getEntity().writeTo(stream);
+				stream.close();
+			} catch (IOException e) {
+				return null;
+			}
 			
-			//notifyDataSetChanged();
+			String dirtyJSON = stream.toString();
+			String s2 = "[" + dirtyJSON;
+			
+			String s3 = s2.substring(0, s2.indexOf('<') - 1);
+			cleanJson = s3 + "]";
 			
 			return null;
 		}

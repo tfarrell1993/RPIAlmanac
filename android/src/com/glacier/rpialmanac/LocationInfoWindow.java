@@ -79,8 +79,10 @@ public class LocationInfoWindow extends Activity {
 		
 		// Prepare comment list adapter to load comments
 		commentList = (ListView)findViewById(R.id.commentList);
-		CommentListAdapter adapter = new CommentListAdapter(this, location.getKey());
+		final CommentListAdapter adapter = new CommentListAdapter(this, location.getKey());
+		adapter.getComments();
 	    commentList.setAdapter(adapter);
+	    
 		
 	    // Listener for post comment button
 		postComment.setOnClickListener(new OnClickListener() {
@@ -94,8 +96,15 @@ public class LocationInfoWindow extends Activity {
 					//there is probably a better way to do it
 					while(success == 0);
 					
-					// handles newly added comment
-					displayNewComment();
+					//Check for successful add from server
+					if(success == 1) {
+						comments.add(newComment.getText().toString());
+						adapter.add(newComment.getText().toString());
+						newComment.setText(null);
+					}
+					else {
+						Log.e("GLACIER","Error retrieving data from server");
+					}
 				}
 			}
 		});
@@ -126,12 +135,7 @@ public class LocationInfoWindow extends Activity {
 	}
 	
 	public void displayNewComment() {
-		//Check for successful add from server
-		if(success == 1) {
-			comments.add(newComment.getText().toString());
-			Log.v("GLACIER",newComment.getText().toString());
-			newComment.setText(null);
-		}
+		
 		
 	}
 	
@@ -153,7 +157,7 @@ public class LocationInfoWindow extends Activity {
 			params.add(new BasicNameValuePair("id", Integer.toString(location.getKey())));
 			params.add(new BasicNameValuePair("comment", comm));
 			json = jsonParser.makeHttpRequest(POST_URL, "POST", params);		
-			Log.v("GLACIER",json.toString());
+
 			try {
 				success = Integer.parseInt(json.getString(TAG_SUCCESS));
 			} catch (NumberFormatException e) {
