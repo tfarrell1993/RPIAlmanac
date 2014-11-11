@@ -21,6 +21,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -75,6 +76,20 @@ public class Map extends Activity implements OnInfoWindowClickListener{
 		getMenuInflater().inflate(R.menu.map, menu);
 		return true;
 	}
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+        case R.id.action_settings:
+        	Intent intent = new Intent(this, SettingsWindow.class);
+        	startActivity(intent);
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+    
     
     //Adds all pins in locations array to map
     protected void displayAllPins() {

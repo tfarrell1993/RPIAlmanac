@@ -36,7 +36,7 @@
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBZITFJnGR3iQzfsMTiwuWZ-jFqCEf8hMY" />
+            android:value="AIzaSyD1ThXSA-k5Zoh3WNCUZIF7_PDj1Ika_JU"/>
 
         <activity
             android:name=".AddLocationActivity"
@@ -50,6 +50,14 @@
         <activity
             android:name=".LocationInfoWindow"
             android:label="@string/title_activity_location_info_window" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.glacier.rpialmanac.Map" />
+        </activity>
+        
+        <activity
+            android:name=".SettingsWindow"
+            android:label="@string/action_settings" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.glacier.rpialmanac.Map" />

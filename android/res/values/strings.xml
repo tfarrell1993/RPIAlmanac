@@ -20,5 +20,13 @@
     </string-array>
 
     <string name="title_activity_location_info_window">LocationInfoWindow</string>
+    
+    <string-array name="distance_array">
+        <item >1</item>
+        <item >2</item>
+        <item >5</item>
+        <item >10</item>
+    </string-array>
+    <string name="distance_label">Maximum distance to search:</string>
 
 </resources>
