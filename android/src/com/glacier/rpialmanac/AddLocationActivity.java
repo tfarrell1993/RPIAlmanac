@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,40 +22,56 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 public class AddLocationActivity extends Activity implements OnClickListener{
 	
+	// Constants needed for server interaction
+	private static final String POST_URL = "http://glacier.net76.net/post.php";
+	private static final String TAG_SUCCESS = "success";
+	private static final String TAG_KEY = "id";
+	
+	// Views for activity
 	private EditText name, addr;
 	private Spinner typeSpinner;
 	private Button submit;
-	Double lat, lng;
-	Location location;
-	int success;
 	
 	// JSON parser class
 	JSONParser jsonParser = new JSONParser();
 	//JSON object from server
 	JSONObject json;
-	private static final String POST_URL = "http://glacier.net76.net/post.php";
-	private static final String TAG_SUCCESS = "success";
-	private static final String TAG_KEY = "id";
 	
 	// Progress Dialog
 	private ProgressDialog pDialog;
+	
+	// location data
+	Double lat, lng;
+	Location location;
+	
+	// Response success variable from server
+	int success;
 		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_location);
+		
+		// Get position from dropped marker
 		Bundle b = getIntent().getExtras();
 		lat = b.getDouble("latitude");
 		lng = b.getDouble("longitude");
+		
+		// Initialize text boxes
 		name = (EditText)findViewById(R.id.locationName);
 		addr = (EditText)findViewById(R.id.locationAddress);
+		
+		// Initialize spinner for location types
 		typeSpinner = (Spinner)findViewById(R.id.type_spinner);
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.type_array, android.R.layout.simple_spinner_item);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		typeSpinner.setAdapter(adapter);
+		
+		// Initialize button
 		submit = (Button)findViewById(R.id.submit);
 		submit.setOnClickListener(this);
 	}
@@ -71,42 +88,61 @@ public class AddLocationActivity extends Activity implements OnClickListener{
 		return super.onOptionsItemSelected(item);
 	}
 	
+	// If back button was pressed
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
 	}
-		
-	 @Override
-	    public void onClick(View v) {
-	    	int id = v.getId();
-			if (id == R.id.submit) {
+	
+	// User clicks submit button
+	@Override
+    public void onClick(View v) {
+    	int id = v.getId();
+		if (id == R.id.submit) {
+			if(!name.getText().toString().matches("") && !addr.getText().toString().matches("")) {
+				// Executes AsyncTask to post new location
 				new AddLocation().execute();
 				
+				// Waits for response from server
 				while(success == 0);
+				
+				// Packages success and new location to return to map activity
 				Intent intent = new Intent();
 				intent.putExtra("success",success);
-				Log.v("GLACIER", new Gson().toJson(location));
 				intent.putExtra("jsonLocation", new Gson().toJson(location));
 				setResult(RESULT_OK, intent);
 				finish();
 			}
-	    }
-	 
-	 private class AddLocation extends AsyncTask<String, Integer, String>{
-	    	
-		 @Override
-		 protected void onPreExecute() {
-			 super.onPreExecute();
-			 pDialog = new ProgressDialog(AddLocationActivity.this);
-			 pDialog.setMessage("Adding new location...");
-			 pDialog.setIndeterminate(false);
-			 pDialog.setCancelable(true);
-			 pDialog.show();
-		 }
-		 
+			else {
+				Context context = getApplicationContext();
+	        	CharSequence text = "Please enter all data. If you are unsure of the location address, please enter 'on campus' or 'unknown'.";
+	        	int duration = Toast.LENGTH_SHORT;
+
+	        	Toast toast = Toast.makeText(context, text, duration);
+	        	toast.show();
+			}
+		}
+    }
+	
+	// AsyncTask to post new location to database
+	private class AddLocation extends AsyncTask<String, Integer, String>{
+	    
+		// Starts progress dialog before starting task
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pDialog = new ProgressDialog(AddLocationActivity.this);
+			pDialog.setMessage("Adding new location...");
+			pDialog.setIndeterminate(false);
+			pDialog.setCancelable(true);
+			pDialog.show();
+		}
+		
+		// Communicates with server in background and parses response
     	@Override
     	protected String doInBackground(String... args) {
     	
+    		// Gets location information from user interface
 	    	String locName = name.getText().toString();
 			String locAddr = addr.getText().toString();
 			String locType = typeSpinner.getSelectedItem().toString();
@@ -131,9 +167,7 @@ public class AddLocationActivity extends Activity implements OnClickListener{
 			return null; 	
     	}
     	
-    	/**
-    	* After completing background task Dismiss the progress dialog
-    	* **/
+    	// After completing background task Dismiss the progress dialog
     	protected void onPostExecute(String file_url) { 
     		pDialog.dismiss();	    	 
     	}

@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-	<RelativeLayout
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    tools:context=".Map" >
@@ -13,8 +14,34 @@
 		     android:id="@+id/map"
 		     android:layout_width="match_parent"
 		     android:layout_height="match_parent"
-		     android:name="com.google.android.gms.maps.MapFragment"/>
+		     android:name="com.google.android.gms.maps.MapFragment" />
 		 
+	     <EditText
+	         android:id="@+id/searchBox"
+	         android:layout_width="190dip"
+	         android:layout_height="wrap_content"
+	         android:layout_alignTop="@+id/map"
+	         android:layout_marginTop="13dip"
+	         android:layout_marginLeft="8dip"
+	         android:layout_marginStart="8dip"
+	         android:hint="@string/search"
+	         android:textSize="16sp"
+	         android:singleLine="false"
+	         android:maxLines="1"
+	         android:background="@drawable/search_box" />
+		     
+	     <Button
+	         android:id="@+id/searchButton"
+	         android:layout_width="wrap_content"
+	         android:layout_height="30sp"
+	         android:layout_toEndOf="@+id/searchBox"
+	         android:layout_toRightOf="@+id/searchBox"
+	         android:layout_alignBottom="@+id/searchBox"
+	         android:text="@string/searchButton"
+	         android:textSize="10sp"
+	         android:background="@drawable/search_button"
+	         android:onClick="searchForLocation" />
+	     
 		 <Button
 		     android:id="@+id/addLocation"
 		     android:layout_width="wrap_content"
@@ -40,8 +67,8 @@
 		     android:textSize="12sp"
 		     android:visibility="gone"
 		     android:onClick="deleteNewLocation"/>
-	</RelativeLayout>
-	<LinearLayout
+	 </RelativeLayout>
+	 <LinearLayout
 	    android:id="@+id/typeListView"
         android:layout_width="240dp"
         android:layout_height="match_parent"

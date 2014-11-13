@@ -120,7 +120,7 @@ public class CommentListAdapter extends ArrayAdapter<String>{
 			}
 			try {
 				String comment = jsonObject.getString("comment");
-				comm.add(comment);
+				comm.add(0,comment);
 			} catch (Exception e) {
 				// JSON or number format issue
 				Log.w("GLACIER", "3");

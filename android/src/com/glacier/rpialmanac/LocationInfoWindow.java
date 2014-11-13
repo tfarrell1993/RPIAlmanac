@@ -1,25 +1,17 @@
 package com.glacier.rpialmanac;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.gson.Gson;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class LocationInfoWindow extends Activity {
 	
@@ -89,7 +82,7 @@ public class LocationInfoWindow extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				if(newComment.getText().toString() != "") {
+				if(!newComment.getText().toString().matches("")) {
 					new postComment().execute();
 					
 					//Must do in order to wait for server response
@@ -105,6 +98,14 @@ public class LocationInfoWindow extends Activity {
 					else {
 						Log.e("GLACIER","Error retrieving data from server");
 					}
+				}
+				else {
+					Context context = getApplicationContext();
+		        	CharSequence text = "Please enter a valid comment.";
+		        	int duration = Toast.LENGTH_SHORT;
+
+		        	Toast toast = Toast.makeText(context, text, duration);
+		        	toast.show();
 				}
 			}
 		});
