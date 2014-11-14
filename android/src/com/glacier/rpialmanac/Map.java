@@ -130,9 +130,6 @@ public class Map extends Activity implements OnInfoWindowClickListener{
     	
     	//Splits search into individual words to better search for location
     	String [] searchWords = searchEntry.split(" ");
-    	
-    	// list of locations matching search
-    	HashMap<Marker,Location> matchedEntries = null;
     	    	
     	//Iterates through hashmap and each word in searchBox for a match
     	if(markerLocationMap != null) {
@@ -297,6 +294,7 @@ public class Map extends Activity implements OnInfoWindowClickListener{
 		}	
 	}	
 	
+	// Called when filter button is turned on or off
 	public void onTypeToggle(View view) {
 		if (view == findViewById(R.id.typeToggle1)) {
 			filter_academic = !filter_academic;

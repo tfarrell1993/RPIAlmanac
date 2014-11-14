@@ -2,17 +2,14 @@ package com.glacier.rpialmanac;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -23,7 +20,6 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -32,7 +28,9 @@ import android.widget.TextView;
 
 public class CommentListAdapter extends ArrayAdapter<String>{
 
+	// Constant for server interaction
 	private static final String RETRIEVE_URL = "http://glacier.net76.net/retrieveComments.php";
+	
 	private Context context;
 	ArrayList<String> comments = new ArrayList<String>();
 	int locId;
@@ -43,6 +41,7 @@ public class CommentListAdapter extends ArrayAdapter<String>{
 	//JSON object from server
 	JSONObject json;
 	
+	// Adapter constructor
 	public CommentListAdapter(Context context,int id) {
 		super(context,R.layout.rowlayout,id);
 		this.context = context;
@@ -88,16 +87,20 @@ public class CommentListAdapter extends ArrayAdapter<String>{
 		// Parse comments from json
 		comments = parseCommentsFromJson(cleanJson);
 		
+		// Notifies adapter that new data was added
 		notifyDataSetChanged();
 	}
 	
+	// Called when new comment is added
+	// Adds it to arraylist of comments
 	@Override
 	public void add(String newComment) {
 		comments.add(0,newComment);
+		
+		// Notifies adapter that new data was added
 		notifyDataSetChanged();
 	}
 	
-	// ***FIX*** to add comments to array in reverse order so they're chronological
 	//Also probably good idea to add a date column to comment database so it can be displayed with each comment
 	private ArrayList<String> parseCommentsFromJson(String json) {
 		ArrayList<String> comm = new ArrayList<String>();
@@ -127,18 +130,12 @@ public class CommentListAdapter extends ArrayAdapter<String>{
 				return null;
 			}
 		}
-		
 		return comm;
 	}
 	
 	 //AsyncTask to retrieve all existing comments in the SQL database
 	private class CommentRetriever extends AsyncTask<Void, Integer, Void> {
-		
-		//Displays a progress pinwheel
-		protected void onPreExecute() {
-    		
-    	}
-		
+
 		//In the background, call RetrieveLocations class
 		//Fill array of Locations with array from database
 		protected Void doInBackground(Void... args) {
@@ -179,11 +176,6 @@ public class CommentListAdapter extends ArrayAdapter<String>{
 			cleanJson = s3 + "]";
 			
 			return null;
-		}
-		
-		//After retrieving all locations, display all pins on map and close progress dialog
-		protected void onPostExecute(Void param) {
-			
 		}
 	}
 }

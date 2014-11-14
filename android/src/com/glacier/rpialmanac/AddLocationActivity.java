@@ -114,6 +114,7 @@ public class AddLocationActivity extends Activity implements OnClickListener{
 				finish();
 			}
 			else {
+				// Message if user does not fill out all text boxes
 				Context context = getApplicationContext();
 	        	CharSequence text = "Please enter all data. If you are unsure of the location address, please enter 'on campus' or 'unknown'.";
 	        	int duration = Toast.LENGTH_SHORT;

@@ -17,9 +17,13 @@ import android.util.Log;
 
 public class RetrieveLocations {
 	
-	static JSONObject jobj;
+	// Constant for server interaction
 	private static final String RETRIEVE_URL = "http://glacier.net76.net/retrieve.php";
 	
+	// JSON object
+	static JSONObject jobj;
+	
+	// Retrieves locations and returns arraylist of locations
 	public static ArrayList<Location> getAllLocations(Void... params) {
 		String JSON = retrieveJSON();
 		if (JSON == null) {
@@ -32,6 +36,7 @@ public class RetrieveLocations {
 		return locations;
 	}
 	
+	// Retrieve locations from server in JSON string
 	private static String retrieveJSON() {
 		HttpClient client = new DefaultHttpClient();
 		HttpResponse response = null;
@@ -45,6 +50,8 @@ public class RetrieveLocations {
 			// Some other server-side issue
 			return null;
 		}
+		
+		// OutputStream to get response from server
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		try {
 			response.getEntity().writeTo(stream);
@@ -59,14 +66,19 @@ public class RetrieveLocations {
 			// Something is wrong with our JSON
 			return null;
 		}
+		
+		// Removes excess characters from server analytics
 		String JSON = dirtyJSON.substring(0, dirtyJSON.indexOf(']') + 1);
 		
 		return JSON;
 	}
 	
+	// Parse each location out of entire JSON response from server
 	private static ArrayList<Location> parseLocationsFromJSON(String JSON) {
 		ArrayList<Location> locations = new ArrayList<Location>();
 		JSONArray jsonArray;
+		
+		// Converts JSON string into a JSON array
 		try {
 			jsonArray = new JSONArray(JSON);
 		} catch (JSONException e) {
@@ -74,6 +86,8 @@ public class RetrieveLocations {
 			Log.w("GLACIER", "1");
 			return null;
 		}
+		
+		// Iterates through JSON array, makes JSON object out of each array entry
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject jsonObject;
 			try {
@@ -83,6 +97,8 @@ public class RetrieveLocations {
 				Log.w("GLACIER", "2");
 				return null;
 			}
+			
+			// Parses location data from JSON object
 			try {
 				Location location = new Location(jsonObject.getString("name"), Double.parseDouble(jsonObject.getString("latitude")),
 						Double.parseDouble(jsonObject.getString("longitude")), jsonObject.getString("address"), jsonObject.getString("type"), jsonObject.getInt("id"));

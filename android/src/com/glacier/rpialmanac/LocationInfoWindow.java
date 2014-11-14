@@ -27,15 +27,26 @@ import android.widget.Toast;
 
 public class LocationInfoWindow extends Activity {
 	
+	// Constants for server interaction
 	private static final String POST_URL = "http://glacier.net76.net/postComment.php";
 	private static final String TAG_SUCCESS = "success";
+	
+	//Progress dialog wheel
 	private ProgressDialog pDialog;
+	
+	// Views for activity
 	private TextView name, addr, type;
 	private EditText newComment;
 	private Button postComment;
 	private ListView commentList;
+	
+	// Success from server
 	private int success = 0;
+	
+	// List of all comments
 	private ArrayList<String> comments = new ArrayList<String>();
+	
+	// location
 	Location location;
 	
 	// JSON parser class
@@ -43,12 +54,13 @@ public class LocationInfoWindow extends Activity {
 	//JSON object from server
 	JSONObject json;
 
+	// Create activity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_location_info_window);
 		
-		//Convert bundled location object from clicked info window into string
+		//Convert bundled location object from json into location
 		String jsonMyObject = "";
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
@@ -56,6 +68,7 @@ public class LocationInfoWindow extends Activity {
 		}
 		location = new Gson().fromJson(jsonMyObject, Location.class);
 		
+		// Initialize textviews for location info
 		name = (TextView)findViewById(R.id.locName);
 		name.setText(location.getName());
 		addr = (TextView)findViewById(R.id.locAddr);
@@ -81,7 +94,8 @@ public class LocationInfoWindow extends Activity {
 		postComment.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
+				
+				// Checks if user entered anything into textbox
 				if(!newComment.getText().toString().matches("")) {
 					new postComment().execute();
 					
@@ -100,6 +114,7 @@ public class LocationInfoWindow extends Activity {
 					}
 				}
 				else {
+					// Create Toast message if user tries to submit comment without entering anything
 					Context context = getApplicationContext();
 		        	CharSequence text = "Please enter a valid comment.";
 		        	int duration = Toast.LENGTH_SHORT;
@@ -134,12 +149,8 @@ public class LocationInfoWindow extends Activity {
 	public void onBackPressed() {
 		super.onBackPressed();
 	}
-	
-	public void displayNewComment() {
-		
-		
-	}
-	
+
+	// AsyncTask to post comment to server
 	private class postComment extends AsyncTask<Void, Integer, Void> {
 			
 		//Displays a progress pinwheel
@@ -151,14 +162,17 @@ public class LocationInfoWindow extends Activity {
     		pDialog.show();
     	}
 		
-		//Post comment to database
+		//Post comment to database in background
 		protected Void doInBackground(Void... args) {
+			
+			// Packages location ID and comment to send to database
 			ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
 			String comm = newComment.getText().toString();
 			params.add(new BasicNameValuePair("id", Integer.toString(location.getKey())));
 			params.add(new BasicNameValuePair("comment", comm));
 			json = jsonParser.makeHttpRequest(POST_URL, "POST", params);		
 
+			// Retrieve success response from server
 			try {
 				success = Integer.parseInt(json.getString(TAG_SUCCESS));
 			} catch (NumberFormatException e) {
@@ -168,9 +182,6 @@ public class LocationInfoWindow extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			//displayNewComment();
-			
 			return null;
 		}
 		
