@@ -132,13 +132,13 @@ public class LocationInfoWindow extends Activity {
 					}
 				}
 				else {
-					// Create Toast message if user tries to submit comment without entering anything
-					Context context = getApplicationContext();
-		        	CharSequence text = "Please enter a valid comment.";
-		        	int duration = Toast.LENGTH_SHORT;
+				  // Create Toast message if user tries to submit comment without entering anything
+				  Context context = getApplicationContext();
+				  CharSequence text = "Please enter a valid comment.";
+				  int duration = Toast.LENGTH_SHORT;
 
-		        	Toast toast = Toast.makeText(context, text, duration);
-		        	toast.show();
+				  Toast toast = Toast.makeText(context, text, duration);
+				  toast.show();
 				}
 			}
 		});
@@ -177,12 +177,19 @@ public class LocationInfoWindow extends Activity {
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 		public void onClick(DialogInterface dialog, int whichButton) {
 			int value = 0;
-			if(input.getText().toString() != "") {
-				value = Integer.parseInt(input.getText().toString());
+			try {
+			  value = Integer.parseInt(input.getText().toString());
 			}
-			else {
-				value = -1;
+			catch (NumberFormatException e) {
+			  value = -1;
 			}
+			
+//			if(input.getText().toString() != "") {
+//				value = Integer.parseInt(input.getText().toString());
+//			}
+//			else {
+//				value = -1;
+//			}
 			
 			// Checks for valid input
 			if(value == 0 || value == 1 || value == 2 || value == 3 || value == 4 || value == 5) {
