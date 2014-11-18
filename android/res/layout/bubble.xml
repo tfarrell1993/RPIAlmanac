@@ -18,6 +18,11 @@
         android:layout_height="wrap_content"
         android:textStyle="italic"
         android:text="@string/tap_to_view_details"
-        android:layout_below="@+id/bubble_category"
-        android:layout_centerInParent="true" />  
+        android:layout_below="@+id/bubble_rating"
+        android:layout_centerInParent="true" /> 
+	<TextView
+	    android:id="@+id/bubble_rating" 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/bubble_category" /> 
 </RelativeLayout>

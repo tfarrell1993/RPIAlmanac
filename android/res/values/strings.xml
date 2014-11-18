@@ -16,6 +16,7 @@
     <string name="tap_to_view_details">Tap to view details</string>
     <string name="search">Search for location</string>
     <string name="searchButton">Search</string>
+    <string name="addRating">Add Rating</string>
 
     <string-array name="type_array">
         <item>Academic</item>

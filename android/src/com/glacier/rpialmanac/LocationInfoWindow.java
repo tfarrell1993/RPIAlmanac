@@ -10,8 +10,11 @@ import org.json.JSONObject;
 import com.google.gson.Gson;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,9 +38,9 @@ public class LocationInfoWindow extends Activity {
 	private ProgressDialog pDialog;
 	
 	// Views for activity
-	private TextView name, addr, type;
+	private TextView name, addr, type, rating;
 	private EditText newComment;
-	private Button postComment;
+	private Button postComment, addRating;
 	private ListView commentList;
 	
 	// Success from server
@@ -48,6 +51,9 @@ public class LocationInfoWindow extends Activity {
 	
 	// location
 	Location location;
+	
+	// iterator value of location in list of location from map activity
+	int iLoc;
 	
 	// JSON parser class
 	JSONParser jsonParser = new JSONParser();
@@ -65,6 +71,7 @@ public class LocationInfoWindow extends Activity {
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
 		   jsonMyObject = b.getString("jsonLocation");
+		   iLoc = b.getInt("i");
 		}
 		location = new Gson().fromJson(jsonMyObject, Location.class);
 		
@@ -75,6 +82,17 @@ public class LocationInfoWindow extends Activity {
 		addr.setText("  " + location.getAddress());
 		type = (TextView)findViewById(R.id.locType);
 		type.setText("  " + location.getLocationType());
+		rating = (TextView)findViewById(R.id.locRating);
+		
+		// Print rating
+		if(location.getRating() != 0.0) {
+			rating.setText(location.getRating() + " / 5 stars of " + location.getNumberOfRatings() + " ratings");
+		}
+		else {
+			rating.setText("No Rating");
+		}
+		
+		addRating = (Button)findViewById(R.id.addRating);		
 		
 		// New comment text box
 		newComment = (EditText)findViewById(R.id.newComment);
@@ -145,8 +163,69 @@ public class LocationInfoWindow extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 	
+	// Dialog box with input pops up asking user to input rating
+	public void addRating(View view) {
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+		alert.setTitle("Add Rating");
+		alert.setMessage("Enter a whole number between 0 and 5 ");
+
+		// Set an EditText view to get user input 
+		final EditText input = new EditText(this);
+		alert.setView(input);
+
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		public void onClick(DialogInterface dialog, int whichButton) {
+			int value = 0;
+			if(input.getText().toString() != "") {
+				value = Integer.parseInt(input.getText().toString());
+			}
+			else {
+				value = -1;
+			}
+			
+			// Checks for valid input
+			if(value == 0 || value == 1 || value == 2 || value == 3 || value == 4 || value == 5) {
+				PostRating post = new PostRating(value,location.getRating(),location.getKey(),location.getNumberOfRatings());
+				
+				// Waits for rating to be changed for server
+				if(post.isDone()) {
+					// Sets location's new rating and updates rating text view
+					location.setRating(post.getUpdatedRating());
+					rating.setText(post.getUpdatedRating() + " / 5 stars of " + location.getNumberOfRatings() + " ratings");
+					
+					// Packages new rating and location i in array of locations to return to map activity
+					Intent intent = new Intent();
+					intent.putExtra("rating",post.getUpdatedRating());
+					intent.putExtra("i",iLoc);
+					setResult(RESULT_OK, intent);
+				}
+			}
+			else {
+				// Display Toast message if user enters invalid input
+			    Context context = getApplicationContext();
+	        	CharSequence text = "Please enter a whole number between 0 and 5";
+	        	int duration = Toast.LENGTH_SHORT;
+
+	        	Toast toast = Toast.makeText(context, text, duration);
+	        	toast.show();
+			}
+		}
+		});
+
+		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		  public void onClick(DialogInterface dialog, int whichButton) {
+		    // Canceled.
+		  }
+		});
+
+		alert.show();
+	}
+	
+	// When back button is pressed, map activity checks for result and this activity closes
 	@Override
 	public void onBackPressed() {
+		finish();
 		super.onBackPressed();
 	}
 
