@@ -41,13 +41,11 @@ public class JSONParser {
       HttpEntity httpEntity = httpResponse.getEntity();
       // Open an inputStream with the data content.
       is = httpEntity.getContent();	 
-    } 
-    catch (IOException e) {
+    } catch (IOException e) {
       return null;
     }
 
     try {
-
       // Create a BufferedReader to parse through the inputStream.
       BufferedReader reader = new BufferedReader(new InputStreamReader(
           is, "iso-8859-1"), 8);
@@ -84,7 +82,7 @@ public class JSONParser {
   }
 
   // function get json from url
-  // by making HTTP POST or GET mehtod
+  // by making HTTP POST or GET method
   public JSONObject makeHttpRequest(String url, String method, ArrayList<NameValuePair> params) {
     // Making HTTP request
     try {
@@ -99,7 +97,7 @@ public class JSONParser {
         HttpResponse httpResponse = httpClient.execute(httpPost);
         HttpEntity httpEntity = httpResponse.getEntity();
         is = httpEntity.getContent();
-      } else if(method == "GET"){
+      } else if(method == "GET") {
         // request method is GET
         DefaultHttpClient httpClient = new DefaultHttpClient();
         String paramString = URLEncodedUtils.format(params, "utf-8");
@@ -114,6 +112,7 @@ public class JSONParser {
       return null;
     }
 
+    // try to read stream from server
     try {
       BufferedReader reader = new BufferedReader(new InputStreamReader(
           is, "iso-8859-1"), 8);

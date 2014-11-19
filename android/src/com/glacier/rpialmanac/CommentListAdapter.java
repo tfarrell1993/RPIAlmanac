@@ -39,6 +39,8 @@ public class CommentListAdapter extends ArrayAdapter<String> {
     locId = id;
   }
 
+  // Returns size of comments list
+  // Need for getView to work properly
   @Override
   public int getCount() {
     return comments.size();
@@ -54,7 +56,7 @@ public class CommentListAdapter extends ArrayAdapter<String> {
 
     //If it is not null, you can just reuse it from the recycler
     TextView textView = (TextView) convertView.findViewById(R.id.textView1);
-
+   
     String comm = comments.get(position);
     textView.setText(comm);
 
@@ -141,6 +143,7 @@ public class CommentListAdapter extends ArrayAdapter<String> {
         return null;
       }
 
+      // Read stream from server
       ByteArrayOutputStream stream = new ByteArrayOutputStream();
       try {
         httpResponse.getEntity().writeTo(stream);
@@ -149,9 +152,9 @@ public class CommentListAdapter extends ArrayAdapter<String> {
         return null;
       }
 
+      // Cleans up the JSON string from server to be in array form
       String dirtyJSON = stream.toString();
       String s2 = "[" + dirtyJSON;
-
       String s3 = s2.substring(0, s2.indexOf('<') - 1);
       cleanJson = s3 + "]";
 

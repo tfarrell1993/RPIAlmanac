@@ -7,7 +7,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 public class PostRating {
 
@@ -15,6 +14,7 @@ public class PostRating {
   private static final String POST_URL = "http://glacier.net76.net/postRating.php";
   private static final String TAG_SUCCESS = "success";
 
+  // Rating variables and server IO
   private static int newRating = 0;
   private int success;
   private int locId;
@@ -39,11 +39,13 @@ public class PostRating {
     return updatedRating;
   }
 
+  // Returns when the success response from the server is retrieved
   public boolean isDone() {
-    while(success != 1);
+    while(success != 1) {}
     return true;
   }
 
+  // Calculates new rating and rounds to one decimal place
   private void updateRating() {
     double tempUpdated = ((currentRating * numberOfRatings) + newRating) / (numberOfRatings + 1);
     tempUpdated = Math.round(tempUpdated * 10);
@@ -54,23 +56,21 @@ public class PostRating {
   private class postNewRating extends AsyncTask<Void, Integer, Void> {
     //Post comment to database in background
     protected Void doInBackground(Void... args) {
+      // Update location's rating
       updateRating();
-      Log.v("GLACIER","Updated Rating in post: " + updatedRating);
-
+     
       // Packages location ID and comment to send to database
       ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
       params.add(new BasicNameValuePair("id", Integer.toString(locId)));
       params.add(new BasicNameValuePair("rating", String.valueOf(updatedRating)));
-      json = jsonParser.makeHttpRequest(POST_URL, "POST", params);    
+      json = jsonParser.makeHttpRequest(POST_URL, "POST", params);
 
       // Retrieve success response from server
       try {
         success = Integer.parseInt(json.getString(TAG_SUCCESS));
-        Log.v("GLACIER", "success" + success);
       } catch (Exception e) {
         // (Unsuccessful)
       }
-      
       return null;
     }
   }

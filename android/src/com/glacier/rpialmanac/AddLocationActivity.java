@@ -140,7 +140,6 @@ public class AddLocationActivity extends Activity implements OnClickListener {
     // Communicates with server in background and parses response
     @Override
     protected String doInBackground(String... args) {
-
       // Gets location information from user interface
       String locName = name.getText().toString();
       String locAddr = addr.getText().toString();

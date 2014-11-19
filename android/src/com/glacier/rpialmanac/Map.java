@@ -34,12 +34,12 @@ public class Map extends Activity implements OnInfoWindowClickListener{
   // Location constants
   private static final double RPI_LOC_LAT = 42.729861;
   private static final double RPI_LOC_LONG = -73.676767;
-
+ 
   // Storing locations
   private static ArrayList<Location> locations = null;
   private static HashMap<Marker, Location> markerLocationMap;
 
-  //Progress Dialog
+  // Progress Dialog
   private ProgressDialog pDialog;
 
   // Views
@@ -60,7 +60,7 @@ public class Map extends Activity implements OnInfoWindowClickListener{
   boolean filter_food = true;
   boolean filter_landmark = true;
   boolean filter_university = true;
-
+  
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -75,7 +75,7 @@ public class Map extends Activity implements OnInfoWindowClickListener{
     addLoc = (Button)findViewById(R.id.addLocation);
     deleteLoc = (Button)findViewById(R.id.deleteLocation);
     searchBox = (EditText)findViewById(R.id.searchBox);
-
+    
     // Retrieve locations from the DB if necessary
     if (locations == null) {
       new LocationRetriever().execute();
@@ -343,7 +343,6 @@ public class Map extends Activity implements OnInfoWindowClickListener{
 
   // Custom details bubble for each marker
   private class LocationBubble implements InfoWindowAdapter {
-
     @SuppressLint("InflateParams")
     public View getInfoContents(Marker marker) {
       View view = getLayoutInflater().inflate(R.layout.bubble, null);
@@ -353,13 +352,13 @@ public class Map extends Activity implements OnInfoWindowClickListener{
       titleView.setText(location.getName());
 
       ratingView = (TextView)view.findViewById(R.id.bubble_rating);
+      
+      // Gets clicked location's rating and puts it in info bubble
       if(location.getRating() != 0.0) {
         ratingView.setText(location.getRating() + " / 5 stars");
-      }
-      else {
+      } else {
         ratingView.setText("-- / 5 stars");
       }
-
 
       TextView categoryView = (TextView)view.findViewById(R.id.bubble_category);
       categoryView.setText(location.getLocationType());
@@ -370,6 +369,5 @@ public class Map extends Activity implements OnInfoWindowClickListener{
     public View getInfoWindow(Marker marker) {
       return null;
     }
-
   }
 }
