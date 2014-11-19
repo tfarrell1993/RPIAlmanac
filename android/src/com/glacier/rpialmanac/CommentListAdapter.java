@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -19,27 +18,19 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-public class CommentListAdapter extends ArrayAdapter<String>{
-
+public class CommentListAdapter extends ArrayAdapter<String> {
   // Constant for server interaction
   private static final String RETRIEVE_URL = "http://glacier.net76.net/retrieveComments.php";
 
   private Context context;
-  ArrayList<String> comments = new ArrayList<String>();
-  int locId;
+  private ArrayList<String> comments = new ArrayList<String>();
+  private int locId;
   private String cleanJson = "";
-
-  // JSON parser class
-  JSONParser jsonParser = new JSONParser();
-  //JSON object from server
-  JSONObject json;
 
   // Adapter constructor
   public CommentListAdapter(Context context,int id) {
@@ -50,7 +41,6 @@ public class CommentListAdapter extends ArrayAdapter<String>{
 
   @Override
   public int getCount() {
-    // TODO Auto-generated method stub
     return comments.size();
   }
 
@@ -64,7 +54,6 @@ public class CommentListAdapter extends ArrayAdapter<String>{
 
     //If it is not null, you can just reuse it from the recycler
     TextView textView = (TextView) convertView.findViewById(R.id.textView1);
-    ImageView imageView = (ImageView) convertView.findViewById(R.id.imgView1);
 
     String comm = comments.get(position);
     textView.setText(comm);
@@ -79,7 +68,7 @@ public class CommentListAdapter extends ArrayAdapter<String>{
     new CommentRetriever().execute();
 
     // Waits for response from server, should find better way to do this
-    while(cleanJson == "");
+    while(cleanJson == "") {}
 
     // adds comma between curly braces so it can be made into jsonArray without errors
     cleanJson = cleanJson.replace("}{","},{");
@@ -109,7 +98,6 @@ public class CommentListAdapter extends ArrayAdapter<String>{
       jsonArray = new JSONArray(json);
     } catch (JSONException e) {
       // Bad JSON
-      Log.w("GLACIER", "1");
       return null;
     }
     for (int i = 0; i < jsonArray.length(); i++) {
@@ -118,7 +106,6 @@ public class CommentListAdapter extends ArrayAdapter<String>{
         jsonObject = jsonArray.getJSONObject(i);
       } catch (JSONException e) {
         // Bad JSON
-        Log.w("GLACIER", "2");
         return null;
       }
       try {
@@ -126,7 +113,6 @@ public class CommentListAdapter extends ArrayAdapter<String>{
         comm.add(0,comment);
       } catch (Exception e) {
         // JSON or number format issue
-        Log.w("GLACIER", "3");
         return null;
       }
     }
@@ -135,7 +121,6 @@ public class CommentListAdapter extends ArrayAdapter<String>{
 
   //AsyncTask to retrieve all existing comments in the SQL database
   private class CommentRetriever extends AsyncTask<Void, Integer, Void> {
-
     //In the background, call RetrieveLocations class
     //Fill array of Locations with array from database
     protected Void doInBackground(Void... args) {
@@ -144,16 +129,11 @@ public class CommentListAdapter extends ArrayAdapter<String>{
       HttpClient httpClient = new DefaultHttpClient();
       HttpResponse httpResponse = null;
       try {	
-
         HttpPost httpPost = new HttpPost(RETRIEVE_URL);
         httpPost.setEntity(new UrlEncodedFormEntity(params));
         httpResponse = httpClient.execute(httpPost);	
-      } catch (ClientProtocolException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
       } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        return null;
       }
 
       if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {

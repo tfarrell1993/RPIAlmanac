@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -30,6 +31,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Map extends Activity implements OnInfoWindowClickListener{
+  // Location constants
+  private static final double RPI_LOC_LAT = 42.729861;
+  private static final double RPI_LOC_LONG = -73.676767;
 
   // Storing locations
   private static ArrayList<Location> locations = null;
@@ -39,18 +43,23 @@ public class Map extends Activity implements OnInfoWindowClickListener{
   private ProgressDialog pDialog;
 
   // Views
-  private Button addLoc, deleteLoc, searchButton;
+  private Button addLoc;
+  private Button deleteLoc;
   private EditText searchBox = null;
   private TextView ratingView;
   GoogleMap map;
 
   // Potential new marker data
   private Marker newMarker;
-  private Double newMarkerLat, newMarkerLng;
+  private Double newMarkerLat;
+  private Double newMarkerLng;
   private int addLocationSuccess;
 
   // Filters
-  boolean filter_academic = true, filter_food = true, filter_landmark = true, filter_university = true;
+  boolean filter_academic = true;
+  boolean filter_food = true;
+  boolean filter_landmark = true;
+  boolean filter_university = true;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -59,14 +68,13 @@ public class Map extends Activity implements OnInfoWindowClickListener{
 
     // Initialize map, move camera to RPI, enable my location
     map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-    map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(42.729861, -73.676767), 16));
+    map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(RPI_LOC_LAT, RPI_LOC_LONG), 16));
     map.setMyLocationEnabled(true);
 
     // Initialize buttons in activity
     addLoc = (Button)findViewById(R.id.addLocation);
     deleteLoc = (Button)findViewById(R.id.deleteLocation);
     searchBox = (EditText)findViewById(R.id.searchBox);
-    searchButton = (Button)findViewById(R.id.searchButton);
 
     // Retrieve locations from the DB if necessary
     if (locations == null) {
@@ -125,6 +133,7 @@ public class Map extends Activity implements OnInfoWindowClickListener{
 
   // Called when user clicks search button
   // Checks locations for match
+  @SuppressLint("DefaultLocale")
   public void searchForLocation(View view) {
     String searchEntry = searchBox.getText().toString();
     Boolean matched = false;
@@ -136,7 +145,6 @@ public class Map extends Activity implements OnInfoWindowClickListener{
     if(markerLocationMap != null) {
       for(HashMap.Entry<Marker,Location> entry : markerLocationMap.entrySet()) {
         for(int i=0;i<searchWords.length;i++) {
-
           // Check if location name contains one of the words typed into search
           // If match occurs, center map on location and display info window
           if(entry.getValue().getName().toLowerCase().contains(searchWords[i].toLowerCase())) {
@@ -198,22 +206,21 @@ public class Map extends Activity implements OnInfoWindowClickListener{
   //Method called when user clicks the confirm button after adding new marker
   public void addNewLocation(View view){
     Intent intent = new Intent(this, AddLocationActivity.class);
-    Bundle b = new Bundle();
+    Bundle bundle = new Bundle();
 
     //Bundles latitude and longitude position to send to AddLocation activity
     if(newMarkerLat!=null && newMarkerLng!=null){
-      b.putDouble("latitude", newMarkerLat);
-      b.putDouble("longitude", newMarkerLng);
-      intent.putExtras(b);
+      bundle.putDouble("latitude", newMarkerLat);
+      bundle.putDouble("longitude", newMarkerLng);
+      intent.putExtras(bundle);
 
       //Starts activity which returns an intent when finished
-      startActivityForResult(intent,90);
+      startActivityForResult(intent, 90);
     }
   }
 
   //Called when the AddLocation activity is finished
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
     switch(requestCode) {
     case 90:
       if(resultCode == RESULT_OK) {
@@ -227,7 +234,7 @@ public class Map extends Activity implements OnInfoWindowClickListener{
           // Extracts location from json encoded location
           Location location = new Gson().fromJson(json, Location.class);
 
-          if(addLocationSuccess == 1){
+          if(addLocationSuccess == 1) {
             locations.add(location);
 
             // Hides confirm and delete buttons, centers camera on new marker
@@ -312,7 +319,7 @@ public class Map extends Activity implements OnInfoWindowClickListener{
       if(location.getLatitude() == marker.getPosition().latitude) {
         intent.putExtra("jsonLocation", new Gson().toJson(location));
         intent.putExtra("i", i);
-        startActivityForResult(intent,50);	
+        startActivityForResult(intent, 50);	
       }
     }	
   }	
@@ -337,6 +344,7 @@ public class Map extends Activity implements OnInfoWindowClickListener{
   // Custom details bubble for each marker
   private class LocationBubble implements InfoWindowAdapter {
 
+    @SuppressLint("InflateParams")
     public View getInfoContents(Marker marker) {
       View view = getLayoutInflater().inflate(R.layout.bubble, null);
       Location location = markerLocationMap.get(marker);

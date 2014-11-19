@@ -13,10 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
 public class RetrieveLocations {
-
   // Constant for server interaction
   private static final String RETRIEVE_URL = "http://glacier.net76.net/retrieve.php";
 
@@ -27,11 +24,9 @@ public class RetrieveLocations {
   public static ArrayList<Location> getAllLocations(Void... params) {
     String JSON = retrieveJSON();
     if (JSON == null) {
-      Log.v("GLACIER","null");
       return null;
     }
 
-    Log.w("GLACIER", JSON);
     ArrayList<Location> locations = parseLocationsFromJSON(JSON);
 
     return locations;
@@ -84,7 +79,6 @@ public class RetrieveLocations {
       jsonArray = new JSONArray(JSON);
     } catch (JSONException e) {
       // Bad JSON
-      Log.w("GLACIER", "1");
       return null;
     }
 
@@ -95,7 +89,6 @@ public class RetrieveLocations {
         jsonObject = jsonArray.getJSONObject(i);
       } catch (JSONException e) {
         // Bad JSON
-        Log.w("GLACIER", "2");
         return null;
       }
 
@@ -107,8 +100,6 @@ public class RetrieveLocations {
         locations.add(location);
       } catch (Exception e) {
         // JSON or number format issue
-        e.printStackTrace();
-        Log.w("GLACIER", "3");
         return null;
       }
     }

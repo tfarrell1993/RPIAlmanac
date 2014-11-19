@@ -4,12 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -21,14 +20,12 @@ import org.json.JSONObject;
 import android.util.Log;
 
 public class JSONParser {
-  static InputStream is = null;
-  static JSONObject jObj ;
-  static String json = "";
+  private static InputStream is = null;
+  private static JSONObject jObj ;
+  private static String json = "";
 
   // constructor
-  public JSONParser() {
-
-  }
+  public JSONParser() {}
 
   public JSONObject getJSONFromUrl(final String url) {
 
@@ -45,14 +42,8 @@ public class JSONParser {
       // Open an inputStream with the data content.
       is = httpEntity.getContent();	 
     } 
-    catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    } 
-    catch (ClientProtocolException e) {
-      e.printStackTrace();
-    } 
     catch (IOException e) {
-      e.printStackTrace();
+      return null;
     }
 
     try {
@@ -95,12 +86,10 @@ public class JSONParser {
   // function get json from url
   // by making HTTP POST or GET mehtod
   public JSONObject makeHttpRequest(String url, String method, ArrayList<NameValuePair> params) {
-
     // Making HTTP request
     try {
-
       // check for request method
-      if(method == "POST"){
+      if(method == "POST") {
         // request method is POST
         // defaultHttpClient
         DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -110,8 +99,7 @@ public class JSONParser {
         HttpResponse httpResponse = httpClient.execute(httpPost);
         HttpEntity httpEntity = httpResponse.getEntity();
         is = httpEntity.getContent();
-      }
-      else if(method == "GET"){
+      } else if(method == "GET"){
         // request method is GET
         DefaultHttpClient httpClient = new DefaultHttpClient();
         String paramString = URLEncodedUtils.format(params, "utf-8");
@@ -122,16 +110,8 @@ public class JSONParser {
         HttpEntity httpEntity = httpResponse.getEntity();
         is = httpEntity.getContent();
       }
-
-    } 
-    catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    } 
-    catch (ClientProtocolException e) {
-      e.printStackTrace();
-    } 
-    catch (IOException e) {
-      e.printStackTrace();
+    } catch (IOException e) {
+      return null;
     }
 
     try {
@@ -144,16 +124,14 @@ public class JSONParser {
       }
       is.close();
       json = sb.toString();
-    } 
-    catch (Exception e) {
+    } catch (Exception e) {
       Log.e("Buffer Error", "Error converting result " + e.toString());
     }
 
     // try parse the string to a JSON object
     try {
       jObj = new JSONObject(json);
-    } 
-    catch (JSONException e) {
+    } catch (JSONException e) {
       Log.e("JSON Parser", "Error parsing data " + e.toString());
     }
 

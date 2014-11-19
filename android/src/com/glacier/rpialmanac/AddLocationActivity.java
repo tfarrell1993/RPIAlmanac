@@ -23,29 +23,30 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class AddLocationActivity extends Activity implements OnClickListener{
-
+public class AddLocationActivity extends Activity implements OnClickListener {
   // Constants needed for server interaction
   private static final String POST_URL = "http://glacier.net76.net/post.php";
   private static final String TAG_SUCCESS = "success";
   private static final String TAG_KEY = "id";
 
   // Views for activity
-  private EditText name, addr;
+  private EditText name;
+  private EditText addr;
   private Spinner typeSpinner;
   private Button submit;
 
   // JSON parser class
-  JSONParser jsonParser = new JSONParser();
+  private JSONParser jsonParser = new JSONParser();
   //JSON object from server
-  JSONObject json;
+  private JSONObject json;
 
   // Progress Dialog
   private ProgressDialog pDialog;
 
   // location data
-  Double lat, lng;
-  Location location;
+  private Double lat;
+  private Double lng;
+  private Location location;
 
   // Response success variable from server
   int success;
@@ -56,9 +57,9 @@ public class AddLocationActivity extends Activity implements OnClickListener{
     setContentView(R.layout.activity_add_location);
 
     // Get position from dropped marker
-    Bundle b = getIntent().getExtras();
-    lat = b.getDouble("latitude");
-    lng = b.getDouble("longitude");
+    Bundle bundle = getIntent().getExtras();
+    lat = bundle.getDouble("latitude");
+    lng = bundle.getDouble("longitude");
 
     // Initialize text boxes
     name = (EditText)findViewById(R.id.locationName);
@@ -95,15 +96,15 @@ public class AddLocationActivity extends Activity implements OnClickListener{
 
   // User clicks submit button
   @Override
-  public void onClick(View v) {
-    int id = v.getId();
+  public void onClick(View view) {
+    int id = view.getId();
     if (id == R.id.submit) {
       if(!name.getText().toString().matches("") && !addr.getText().toString().matches("")) {
         // Executes AsyncTask to post new location
         new AddLocation().execute();
 
         // Waits for response from server
-        while(success == 0);
+        while(success == 0) {}
 
         // Packages success and new location to return to map activity
         Intent intent = new Intent();
@@ -111,8 +112,7 @@ public class AddLocationActivity extends Activity implements OnClickListener{
         intent.putExtra("jsonLocation", new Gson().toJson(location));
         setResult(RESULT_OK, intent);
         finish();
-      }
-      else {
+      } else {
         // Message if user does not fill out all text boxes
         Context context = getApplicationContext();
         CharSequence text = "Please enter all data. If you are unsure of the location address, please enter 'on campus' or 'unknown'.";
@@ -126,7 +126,6 @@ public class AddLocationActivity extends Activity implements OnClickListener{
 
   // AsyncTask to post new location to database
   private class AddLocation extends AsyncTask<String, Integer, String>{
-
     // Starts progress dialog before starting task
     @Override
     protected void onPreExecute() {
@@ -147,7 +146,7 @@ public class AddLocationActivity extends Activity implements OnClickListener{
       String locAddr = addr.getText().toString();
       String locType = typeSpinner.getSelectedItem().toString();
 
-      try{
+      try {
         // Packages up data for location to be added to database
         ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("name", locName));
@@ -160,8 +159,7 @@ public class AddLocationActivity extends Activity implements OnClickListener{
         success = json.getInt(TAG_SUCCESS);
         int key = json.getInt(TAG_KEY);
         location = new Location(locName,lat,lng,locAddr,locType,key,0.0,0);
-      }
-      catch(Exception e){
+      } catch(Exception e){
         e.printStackTrace();
       }
 
