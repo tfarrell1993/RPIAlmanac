@@ -23,6 +23,7 @@
         <item>Food</item>
         <item>Landmark</item>
         <item>University Building</item>
+        <item>Other</item>
     </string-array>
 
 </resources>
